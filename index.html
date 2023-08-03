@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Card Grid App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+    }
+
+    .navbar {
+      background-color: #333;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-name {
+      color: #fff;
+      font-size: 24px;
+    }
+
+    .button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .user-card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+      margin: 20px;
+    }
+
+    .user-card {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .user-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .user-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .user-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .user-email {
+      font-size: 16px;
+    }
+
+    .loader {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    /* Responsive styles */
+    @media screen and (min-width: 600px) {
+      .user-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .user-name {
+        font-size: 16px;
+      }
+
+      .user-email {
+        font-size: 14px;
+      }
+    }
+
+    @media screen and (min-width: 992px) {
+      .user-card-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .user-name {
+        font-size: 14px;
+      }
+
+      .user-email {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <span class="brand-name">RANDOM USER</span>
+    <button class="button" onclick="getUsers()" id="getUsersButton">Get Users</button>
+  </div>
+  <div class="user-card-grid" id="userCardGridContainer"></div>
+  <script>
+    const getUsersButton = document.getElementById('getUsersButton');
+    const userCardGridContainer = document.getElementById('userCardGridContainer');
+
+    const getUsers = async () => {
+      getUsersButton.disabled = true;
+      userCardGridContainer.innerHTML = '<div class="loader">Loading...</div>';
+
+      try {
+        const response = await fetch('https://reqres.in/api/users?page=1');
+        const data = await response.json();
+        const users = data.data;
+
+        userCardGridContainer.innerHTML = '';
+        users.forEach(user => {
+          const userCard = document.createElement('div');
+          userCard.classList.add('user-card');
+
+          const userImage = document.createElement('img');
+          userImage.classList.add('user-image');
+          userImage.src = user.avatar;
+          userImage.alt = 'User Avatar';
+
+          const userName = document.createElement('span');
+          userName.classList.add('user-name');
+          userName.textContent = `${user.first_name} ${user.last_name}`;
+
+          const userEmail = document.createElement('span');
+          userEmail.classList.add('user-email');
+          userEmail.textContent = user.email;
+
+          userCard.appendChild(userImage);
+          userCard.appendChild(userName);
+          userCard.appendChild(userEmail);
+
+          userCardGridContainer.appendChild(userCard);
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      getUsersButton.disabled = false;
+    };
+  </script>
+</body>
+</html>
